@@ -1,6 +1,6 @@
 const HER_NAME   = "любимки";
 const YOUR_NAME  = "Ростя";
-const START_DATE = null;
+const START_DATE = "2026-06-14T00:00:00";
 
 const REASONS = [
   "Потому что ты умеешь превратить обычный вторник в лучший день недели.",
@@ -118,7 +118,9 @@ function initSmoothNavigation(){
       initNavHighlight();
       initHomePage();
       initReasonsPage();
+      initChosenPage();
       initMeterPage();
+      initTogetherPage();
       initFinalePage();
     } catch {
       location.href = url.href;
@@ -177,6 +179,18 @@ function initReasonsPage(){
   });
 }
 
+function initChosenPage(){
+  const btn = document.getElementById('chosen-secret-btn');
+  const text = document.getElementById('chosen-secret');
+  if (!btn || !text) return;
+
+  btn.addEventListener('click', () => {
+    text.classList.add('shown');
+    btn.textContent = 'Я всё ещё выбираю тебя 💞';
+    if (window.burstConfetti) window.burstConfetti(20);
+  });
+}
+
 function initMeterPage(){
   const range = document.getElementById('meter-range');
   if (!range) return;
@@ -200,6 +214,38 @@ function initMeterPage(){
   }
   range.addEventListener('input', updateMeter);
   updateMeter();
+}
+
+function initTogetherPage(){
+  const wrap = document.getElementById('together-wrap');
+  if (!wrap) return;
+
+  const daysEl = document.getElementById('together-days');
+  const hoursEl = document.getElementById('together-hours');
+  const minutesEl = document.getElementById('together-minutes');
+  const secondsEl = document.getElementById('together-seconds');
+  const dateEl = document.getElementById('together-date');
+
+  const start = new Date(START_DATE);
+  if (dateEl) dateEl.textContent = 'с ' + start.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  function updateTogetherTime(){
+    const now = new Date();
+    const diff = Math.max(0, now.getTime() - start.getTime());
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    if (daysEl) daysEl.textContent = days;
+    if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+    if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+    if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+  }
+
+  updateTogetherTime();
+  setInterval(updateTogetherTime, 1000);
 }
 
 function initFinalePage(){
@@ -233,6 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavHighlight();
   initHomePage();
   initReasonsPage();
+  initChosenPage();
   initMeterPage();
+  initTogetherPage();
   initFinalePage();
 });
